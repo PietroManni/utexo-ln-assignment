@@ -72,20 +72,20 @@ port=18333
 Start + logs:
 
 ```
-dockercomposeup-dbitcoind
-dockercomposelogs-fbitcoind
+docker compose up - dbitcoind
+docker compose logs - fbitcoind
 ```
 
 Blockchain sync status:
 
 ```
-dockercomposeexecbitcoindbitcoin-cli-testnet-rpcuser=bitcoin-rpcpassword=bitcoingetblockchaininfo
+docker compose exec bitcoin dbitcoin-cli-testnet-rpcuser=bitcoin-rpcpassword=bitcoingetblockchaininfo
 ```
 
 Peer/network status:
 
 ```
-dockercomposeexecbitcoindbitcoin-cli-testnet-rpcuser=bitcoin-rpcpassword=bitcoingetnetworkinfo
+docker compose exec bitcoin dbitcoin-cli-testnet-rpcuser=bitcoin-rpcpassword=bitcoingetnetworkinfo
 ```
 
 ---
@@ -122,8 +122,8 @@ CLN B (`cln_b`)
 Connect A → B:
 
 ```
-dockercomposeexeccln_alightning-cli--network=testnetconnect02cc31b3585a0a660649a2d39d772afb35e71277b2e4064b2c0bb99b21c831dcaa@cln_b:9735
-dockercomposeexeccln_alightning-cli--network=testnetlistpeers
+docker compose exec cln_a lightning-cli--network=testnetconnect02cc31b3585a0a660649a2d39d772afb35e71277b2e4064b2c0bb99b21c831dcaa@cln_b:9735
+docker compose exec cln_a lightning-cli--network=testnetlistpeers
 ```
 
 ---
@@ -133,7 +133,7 @@ dockercomposeexeccln_alightning-cli--network=testnetlistpeers
 Generated on-chain addresses for CLN A:
 
 ```
-dockercomposeexeccln_alightning-cli--network=testnetnewaddr
+docker compose exec cln_a lightning-cli--network=testnetnewaddr
 ```
 
 Addresses (CLN A):
@@ -237,29 +237,29 @@ Once the faucet UTXO becomes visible in `cln_a listfunds`, channels and payments
 ### 1) Ensure LN nodes are up and connected
 
 ```
-dockercomposeexeccln_alightning-cli--network=testnetgetinfo
-dockercomposeexeccln_blightning-cli--network=testnetgetinfo
-dockercomposeexeccln_alightning-cli--network=testnetconnect02cc31b3585a0a660649a2d39d772afb35e71277b2e4064b2c0bb99b21c831dcaa@cln_b:9735
-dockercomposeexeccln_alightning-cli--network=testnetlistpeers
+docker compose exec cln_a lightning-cli--network=testnetgetinfo
+docker compose exec cln_b lightning-cli--network=testnetgetinfo
+docker compose exec cln_a lightning-cli--network=testnetconnect02cc31b3585a0a660649a2d39d772afb35e71277b2e4064b2c0bb99b21c831dcaa@cln_b:9735
+docker compose exec cln_a lightning-cli--network=testnetlistpeers
 ```
 
 ### 2) Confirm CLN A has on-chain funds
 
 ```
-dockercomposeexeccln_alightning-cli--network=testnetlistfunds
+docker compose exec cln_a lightning-cli--network=testnetlistfunds
 ```
 
 ### 3) Open channel #1 (A -> B)
 
 ```
-dockercomposeexeccln_alightning-cli--network=testnetfundchannel02cc31b3585a0a660649a2d39d772afb35e71277b2e4064b2c0bb99b21c831dcaa100000
+docker compose exec cln_a lightning-cli--network=testnetfundchannel02cc31b3585a0a660649a2d39d772afb35e71277b2e4064b2c0bb99b21c831dcaa100000
 ```
 
 ### 4) Open channel #2 (option: B -> A)
 
 ```
-dockercomposeexeccln_blightning-cli--network=testnetconnect0210d5edfed05c6ff94305e7a9758de2d96eb6ee626ba55100e6e6d7e0b7e60a54@cln_a:9735
-dockercomposeexeccln_blightning-cli--network=testnetfundchannel0210d5edfed05c6ff94305e7a9758de2d96eb6ee626ba55100e6e6d7e0b7e60a5450000
+docker compose exec cln_b lightning-cli--network=testnetconnect0210d5edfed05c6ff94305e7a9758de2d96eb6ee626ba55100e6e6d7e0b7e60a54@cln_a:9735
+docker compose exec cln_b lightning-cli--network=testnetfundchannel0210d5edfed05c6ff94305e7a9758de2d96eb6ee626ba55100e6e6d7e0b7e60a5450000
 ```
 
 ### 5) Payment demo + logging (tool)
@@ -277,14 +277,14 @@ pythontool\liquidity_orchestrator.pypay--amount-sat5000--bolt11<BOLT11>
 Start infrastructure:
 
 ```
-dockercomposeup-d
-dockerps
+docker compose up-d
+docker ps
 ```
 
 Monitor bitcoind sync:
 
 ```
-dockercomposeexecbitcoindbitcoin-cli-testnet-rpcuser=bitcoin-rpcpassword=bitcoingetblockchaininfo
+docker compose exec bitcoin dbitcoin-cli-testnet-rpcuser=bitcoin-rpcpassword=bitcoingetblockchaininfo
 ```
 
 ---
