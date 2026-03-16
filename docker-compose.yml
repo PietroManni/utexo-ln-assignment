@@ -1,0 +1,59 @@
+services:
+  bitcoind:
+    image: lncm/bitcoind:v28.0
+    user: "0:0"
+    command: [
+      "-conf=/data/.bitcoin/bitcoin.conf",
+      "-datadir=/data"
+    ]
+    volumes:
+      - ./conf/bitcoin.conf:/data/.bitcoin/bitcoin.conf
+      - bitcoin-data:/data
+    ports:
+      - "18333:18333"
+      - "18332:18332"
+      - "28332:28332"
+      - "28333:28333"
+
+  cln_a:
+    image: elementsproject/lightningd:stable
+    depends_on:
+      - bitcoind
+    environment:
+      - LIGHTNINGD_NETWORK=testnet
+    volumes:
+      - cln-a-data:/root/.lightning
+    ports:
+      - "19735:9735"
+    command: >
+      --log-level=debug
+      --bitcoin-rpcconnect=bitcoind
+      --bitcoin-rpcport=18332
+      --bitcoin-rpcuser=bitcoin
+      --bitcoin-rpcpassword=bitcoin
+      --bitcoin-rpcclienttimeout=1200
+      --bind-addr=0.0.0.0:9735
+
+  cln_b:
+    image: elementsproject/lightningd:stable
+    depends_on:
+      - bitcoind
+    environment:
+      - LIGHTNINGD_NETWORK=testnet
+    volumes:
+      - cln-b-data:/root/.lightning
+    ports:
+      - "29735:9735"
+    command: >
+      --log-level=debug
+      --bitcoin-rpcconnect=bitcoind
+      --bitcoin-rpcport=18332
+      --bitcoin-rpcuser=bitcoin
+      --bitcoin-rpcpassword=bitcoin
+      --bitcoin-rpcclienttimeout=600
+      --bind-addr=0.0.0.0:9735
+
+volumes:
+  bitcoin-data:
+  cln-a-data:
+  cln-b-data:
